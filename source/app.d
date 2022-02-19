@@ -5,56 +5,65 @@ import std.process : spawnProcess, environment;
 import std.algorithm : endsWith;
 import std.conv : to;
 import commonmarkd : convertMarkdownToHTML;
-import handy_httpd : HttpServer, simpleHandler, notFound, okResponse; 
+import handy_httpd : HttpServer, HttpRequestHandler, HttpRequest, HttpResponse, notFound, okResponse; 
 
 struct Settings
 {
+    string root;
     ushort port;
     string browser;
 
-    static Settings instance()
+    static Settings inst;
+    static void init()
     {
-        Settings settings;
-        settings.port = 8080;
-        settings.browser = environment.get("BROWSER");
-        return settings;
+        inst.root = "127.0.0.1";
+        inst.port = 8080;
+        inst.browser = environment.get("BROWSER");
     }
 }
 
-void startserver(Settings settings)
+class RequestHandler : HttpRequestHandler
 {
-    auto s = new HttpServer(simpleHandler((request) {
+    HttpResponse handle(HttpRequest request)
+    {
         string abspath = request.url;
-        if (!abspath.endsWith(".md") || !exists(abspath)) return notFound();
-        string html = convertMarkdownToHTML(readText(abspath));
-        return okResponse().setBody(html);
-    }), "127.0.0.1", settings.port);
-	s.start();
+        if (!abspath.endsWith(".md") || !exists(abspath))
+        {
+            return notFound();
+        }
+        else
+        {
+            string html = convertMarkdownToHTML(readText(abspath));
+            return okResponse().setBody(html);
+        }
+    }
 }
 
-void startview(Settings settings, string file)
+void startview(string file)
 {
     auto abspath = absolutePath(file);
-    auto url = "localhost:" ~ to!string(settings.port) ~ abspath;
-    spawnProcess([settings.browser, url]);
+    auto url = "localhost:" ~ to!string(Settings.inst.port) ~ abspath;
+    spawnProcess([Settings.inst.browser, url]);
 }
 
 void main(string[] args)
 {
-    const auto settings = Settings.instance();
+    Settings.init();
 
 	if (args.length != 2)
     {
         writeln("zettel");
-        writeln("using web browser: ", settings.browser);
+        writeln("using web browser: ", Settings.inst.browser);
         writeln("Usage:");
         writeln("  zettel server");
-        writeln("    -> start background server on port ", settings.port);
+        writeln("    -> start background server on port ", Settings.inst.port);
         writeln("  zettel [path to markdown]");
         writeln("    -> view the specified file");
         return;
     }
     
-    if (args[1] == "server") startserver(settings);
-    else startview(settings, args[1]);
+    if (args[1] == "server") 
+        new HttpServer(new RequestHandler, Settings.inst.root, Settings.inst.port).start();
+    else 
+        startview(args[1]);
 }
