@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/zettel
+zettel.so
+zettel.dylib
+zettel.dll
+zettel.a
+zettel.lib
+zettel-test-*
+*.exe
+*.o
+*.obj
+*.lst
