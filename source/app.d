@@ -1,20 +1,21 @@
-import std.stdio;
-import std.path;
-import std.file;
-import std.process;
+import std.stdio : writeln;
+import std.path : absolutePath;
+import std.file : exists, readText;
+import std.process : spawnProcess, environment;
 import std.algorithm : endsWith;
-import std.conv;
-import commonmarkd;
-import handy_httpd; 
+import std.conv : to;
+import commonmarkd : convertMarkdownToHTML;
+import handy_httpd : HttpServer, simpleHandler, notFound, okResponse; 
 
 struct Settings
 {
-    ushort port = 8080;
+    ushort port;
     string browser;
 
     static Settings instance()
     {
         Settings settings;
+        settings.port = 8080;
         settings.browser = environment.get("BROWSER");
         return settings;
     }
