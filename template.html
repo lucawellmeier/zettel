@@ -4,9 +4,34 @@
 <title>zettel</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript">
+function startUpdateLoop()
+{
+  var container = document.getElementById("content");
+  var lastUpdate = (new Date()).getTime();
+
+  setInterval(function() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "[URL].check", true);
+    xhttp.setRequestHeader("Last-update", lastUpdate.toString());
+    xhttp.timeout = 80;
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200)
+      {
+        if (xhttp.responseText == "")
+        {
+          console.log("nothing new");
+        }
+      }
+    };
+    xhttp.send(null);
+  }, 100);
+}
+window.onload = startUpdateLoop;
+</script>
 </head>
 <body>
-<article>
+<article id="content">
 [CONTENT]
 </article>
 </body>

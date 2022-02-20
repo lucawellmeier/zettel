@@ -20,11 +20,21 @@ class RequestHandler : HttpRequestHandler
     HttpResponse handle(HttpRequest request)
     {
         string url = request.url;
-        if (url.endsWith(".md") && exists(url))
+        if (url.endsWith(".md") && url.exists)
         {
             string html = convertMarkdownToHTML(readText(url));
             string page = HTML_TEMPLATE.replace("[CONTENT]", html);
+            page = page.replace("[URL]", url);
             return okResponse().setBody(page);
+        }
+        else if (url.endsWith(".md.check") && url[0 .. $-6].exists)
+        {
+            ulong lastClientUpdate = to!ulong(request.headers["Last-update"]);
+            writeln(lastClientUpdate);
+            auto response = okResponse();
+            response.addHeader("Content-type", "text/html");
+            response.setBody("");
+            return response;
         }
         else return notFound();
     }
