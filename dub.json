@@ -3,6 +3,7 @@
 		"Luca Wellmeier"
 	],
 	"copyright": "Copyright © 2022, Luca Wellmeier",
+    "dflags-dmd": ["-J."],
 	"dependencies": {
 		"commonmark-d": "~>1.0.8",
 		"handy-httpd": "~>1.3.0"
