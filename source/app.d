@@ -9,9 +9,10 @@ import commonmarkd : convertMarkdownToHTML;
 import handy_httpd : HttpServer, HttpRequestHandler, HttpRequest, HttpResponse, notFound, okResponse; 
 
 
-string ROOT             = "127.0.0.1";
+string HOSTNAME         = "127.0.0.1";
 ushort PORT             = 8888;
 string BROWSER          = "firefox";
+string EDITOR           = "gedit";
 string HTML_TEMPLATE    = import("template.html");
 
 
@@ -32,9 +33,15 @@ class RequestHandler : HttpRequestHandler
             ulong lastClientUpdate = to!ulong(request.headers["Last-update"]);
             writeln(lastClientUpdate);
             auto response = okResponse();
-            response.addHeader("Content-type", "text/html");
+            response.addHeader("Content-type", "text/plain");
             response.setBody("");
             return response;
+        }
+        else if (url.endsWith(".md.edit") && url[0 .. $-5].exists)
+        {
+            auto file = url[0 .. $-5];
+            spawnProcess([EDITOR, file]);
+            return okResponse().addHeader("Content-type", "text/plain").setBody("");
         }
         else return notFound();
     }
@@ -63,7 +70,7 @@ void main(string[] args)
     
     if (args[1] == "server")
     {
-        auto server = new HttpServer(new RequestHandler, ROOT, PORT);
+        auto server = new HttpServer(new RequestHandler, HOSTNAME, PORT);
         server.start();
         scope(exit) server.stop();
     }

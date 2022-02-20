@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script type="text/javascript">
-function startUpdateLoop()
+window.onload = function()
 {
   var container = document.getElementById("content");
   var lastUpdate = (new Date()).getTime();
@@ -26,11 +26,21 @@ function startUpdateLoop()
     };
     xhttp.send(null);
   }, 100);
-}
-window.onload = startUpdateLoop;
+
+  document.getElementById("edit-button").onclick = function()
+  {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "[URL].edit", true);
+    xhttp.send(null);
+  };
+};
 </script>
 </head>
 <body>
+<div>
+  <button id="edit-button">Edit</button>
+</div>
+<hr>
 <article id="content">
 [CONTENT]
 </article>
