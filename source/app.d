@@ -5,6 +5,7 @@ import std.file : exists, readText;
 import std.process : spawnProcess;
 import std.algorithm : endsWith;
 import std.conv : to;
+import std.socket : Socket, SocketOptionLevel, SocketOption;
 import commonmarkd : convertMarkdownToHTML;
 import handy_httpd : HttpServer, HttpRequestHandler, HttpRequest, HttpResponse, notFound, okResponse; 
 
@@ -15,6 +16,19 @@ string BROWSER          = "firefox";
 string EDITOR           = "gedit";
 string HTML_TEMPLATE    = import("template.html");
 
+
+class NoWaitHttpServer : HttpServer
+{
+    this(HttpRequestHandler handler, string hostname, ushort port)
+    {
+        super(handler, hostname, port);
+    }
+
+    override void configurePreBind(Socket socket)
+    {
+        socket.setOption(SocketOptionLevel.SOCKET, SocketOption.REUSEADDR, 1);
+    }
+}
 
 class RequestHandler : HttpRequestHandler
 {
@@ -70,7 +84,7 @@ void main(string[] args)
     
     if (args[1] == "server")
     {
-        auto server = new HttpServer(new RequestHandler, HOSTNAME, PORT);
+        auto server = new NoWaitHttpServer(new RequestHandler, HOSTNAME, PORT);
         server.start();
         scope(exit) server.stop();
     }
