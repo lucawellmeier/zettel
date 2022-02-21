@@ -8,29 +8,30 @@
 window.onload = function()
 {
   var container = document.getElementById("content");
-  var lastUpdate = (new Date()).getTime();
+  var lastUpdate = Math.floor(Date.now() / 1000);
 
   setInterval(function() {
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "[URL].check", true);
+    xhttp.open("GET", "[[[ADDRESS]]][[[PATH]]]/check", true);
     xhttp.setRequestHeader("Last-update", lastUpdate.toString());
-    xhttp.timeout = 80;
+    xhttp.timeout = 250;
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200)
       {
-        if (xhttp.responseText == "")
+        if (xhttp.responseText != "")
         {
-          console.log("nothing new");
+          lastUpdate = Math.floor(Date.now() / 1000);
+          container.innerHTML = xhttp.responseText;
         }
       }
     };
     xhttp.send(null);
-  }, 100);
+  }, 300);
 
   document.getElementById("edit-button").onclick = function()
   {
     var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "[URL].edit", true);
+    xhttp.open("POST", "[[[ADDRESS]]][[[PATH]]]/edit", true);
     xhttp.send(null);
   };
 };
@@ -42,7 +43,7 @@ window.onload = function()
 </div>
 <hr>
 <article id="content">
-[CONTENT]
+[[[CONTENT]]]
 </article>
 </body>
 </html>
