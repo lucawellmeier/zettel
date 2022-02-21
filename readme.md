@@ -1,28 +1,34 @@
 # zettel
 
-> no-config, no-interference Markdown note-taking system
-
-(name coming from the [Zettelkasten concept]())
+> zero system-interference Markdown note-taking system
 
 The problems and needs I'm trying to address here:
 
 - I want to use Markdown for everything I write
-- Markdown is a single-file description language and is not really meant for files that know each other
-    - need a very simple local server running in the background
-- I don't want to/cannot extend my (very niche) text editor with Markdown preview abilities
-    - my (very niche) web browser can do that better anyway
-    - said server can be made responsible for auto-updating the view
-- I don't want to mess up my Markdown with weird syntax
+- I want to refer easily from one note to the other
+- I want to use my own text editor and my own web browser 
+  for writing and viewing
+- I want to use a standard Markdown syntax
 - I don't want to have both HTML and Markdown lying around
-- I don't want any more configuration files on my system
+- I don't want any configuration files on my system
+
+The result is **zettel**, a local background server
+which takes care of translating your Markdown to HTML, 
+displaying it in your browser and automatically updating
+the view when needed. The name comes from the 
+[Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten) 
+technique.
 
 ## Compile and installation
 
 What you need:
-- (as of right now) a Linux system
-- a [D]() compiler which implements D's standard library
-- any text editor, set as `EDITOR` environment variable
-- any web browser, set as `BROWSER` environment variable
+- a Linux system (not tested on other platforms)
+- git
+- a web browser and a text editor
+- [Digital Mars D compiler (DMD)](https://dlang.org/download.html) 
+  and [DUB](https://dub.pm/getting_started), the D package manager
+
+Clone the repo and simply run `dub build`.
 
 ## Quickstart (in fact, there is almost nothing more)
 
