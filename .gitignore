@@ -13,3 +13,5 @@ zettel-test-*
 *.o
 *.obj
 *.lst
+
+sampledata/
