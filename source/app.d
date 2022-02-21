@@ -1,8 +1,9 @@
 import std.stdio : writeln;
-import std.array : replace;
+import std.format : format;
+import std.array : replace, split;
 import std.path : absolutePath;
 import std.file : exists, readText, timeLastModified;
-import std.process : spawnProcess;
+import std.process : spawnProcess, Config;
 import std.algorithm : endsWith;
 import std.conv : to;
 import std.socket : Socket, SocketOptionLevel, SocketOption;
@@ -14,10 +15,20 @@ enum string IP              = "127.0.0.1";
 enum string HOSTNAME        = "localhost";
 enum ushort PORT            = 8888;
 enum string ADDRESS         = "http://" ~ HOSTNAME ~ ":" ~ PORT.to!string;
-enum string BROWSER         = "firefox";
-enum string EDITOR          = "gedit";
+enum string BROWSER         = "surf %s";
+enum string EDITOR          = "st -e nvim %s";
 enum string HTML_TEMPLATE   = import("template.html").replace("[[[ADDRESS]]]", ADDRESS);
 
+
+void spawnDetachedProcess(string command, string file)
+{
+    spawnProcess(
+        command.split(" ").replace("%s", file),
+        null, // environment
+        Config.detached,
+        null // working dir
+    );
+}
 
 class NoWaitHttpServer : HttpServer
 {
@@ -88,7 +99,7 @@ class RequestHandler : HttpRequestHandler
         else if (url.endsWith(".md/edit") && url[0 .. $-5].exists)
         {
             string file = url[0 .. $-5];
-            spawnProcess([EDITOR, file]);
+            spawnDetachedProcess(EDITOR, file);
             return okResponse().addHeader("Content-type", "text/plain").setBody("");
         }
         else return notFound();
@@ -99,7 +110,7 @@ void startview(string file)
 {
     auto abspath = absolutePath(file);
     auto url = "http://localhost:" ~ to!string(PORT) ~  abspath;
-    spawnProcess([BROWSER, url]);
+    spawnDetachedProcess(BROWSER, url);
 }
 
 void main(string[] args)
