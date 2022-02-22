@@ -14,7 +14,7 @@ window.onload = function()
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "[[[ADDRESS]]][[[PATH]]]/check", true);
     xhttp.setRequestHeader("Last-update", lastUpdate.toString());
-    xhttp.timeout = 250;
+    xhttp.timeout = 350;
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200)
       {
@@ -26,7 +26,7 @@ window.onload = function()
       }
     };
     xhttp.send(null);
-  }, 300);
+  }, 400);
 
   document.getElementById("edit-button").onclick = function()
   {

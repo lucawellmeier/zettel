@@ -2,6 +2,8 @@
 
 > zero system-interference Markdown note-taking system
 
+-------------------------------------------------
+
 The problems and needs I'm trying to address here:
 
 - I want to use Markdown for everything I write
@@ -28,23 +30,36 @@ What you need:
 - [Digital Mars D compiler (DMD)](https://dlang.org/download.html) 
   and [DUB](https://dub.pm/getting_started), the D package manager
 
-Clone the repo and simply run `dub build`.
+Clone the repo, go to `source/app.d` and set your preferred web browser
+and text editor by editing the following lines at the beginning of the
+file:
+```D
+enum string BROWSER         = "surf %s";
+enum string EDITOR          = "st -e nvim %s";
+```
+Then compile using `dub build`. Note that you can take the resulting
+executable whereever you want since it is completely stand-alone. 
+In particular, the `template.html` file is inserted into the code 
+at compile-time.
 
 ## Quickstart (in fact, there is almost nothing more)
 
 Start the server simply by executing `zettel server`.
-Go somewhere in your filesystem, say `/foo/bar/`, and create a new Markdown file, say `test.md`.
-Run `zettel test.md` and you will see the HTML page in your set browser. In the title bar 
-you will find the button edit, which, upon pressed, will open your text editor. Edit the file and
+Go somewhere in your filesystem, say `/foo/bar/`, and create a new 
+Markdown file, say `test.md`.
+Run `zettel test.md` and you will see the HTML page in your configured 
+browser. In the title bar you will find the button edit, which, upon 
+pressed, will open your text editor. Edit the file and
 save it to automatically update the browser view.
 
-## Markdown syntax
+### Used Markdown syntax
 
-GitHub-flavored Markdown with extension for using Latex's `$ ... $` and `$$ ... $$` is used as a base. 
-The only functional addition is that links 
-that refer to local Markdown files automatically send you to their `zettel` view.
+Nothing to say here: completely standard GitHub-flavored Markdown with 
+extension for escaping Latex's `$ ... $` and `$$ ... $$` is used as a base.
 
 ## Configuration
 
-There is no config file. All configuration is done by recompiling. This way you can easily change
-the layout/appearance or the used port of the server (in case of interference with other programs).
+There is no config file. All configuration is done by recompiling. This way 
+you can easily change the layout/appearance by editing the HTML template
+(which is then inserted into the code at compile-time) or the used port of the 
+server (in case of interference with other programs).
