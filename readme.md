@@ -54,8 +54,12 @@ save it to automatically update the browser view.
 
 ### Used Markdown syntax
 
-Nothing to say here: completely standard GitHub-flavored Markdown with 
-extension for escaping Latex's `$ ... $` and `$$ ... $$` is used as a base.
+It uses [CommonMark](https://commonmark.org/) with the following extensions:
+- `noHTML`
+- `noIndentedCodeBlocks`
+- `latexMathSpans`
+- `tablesExtension`
+
 
 ## Configuration
 
