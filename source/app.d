@@ -117,13 +117,11 @@ void main(string[] args)
 {
 	if (args.length != 2)
     {
-        writeln("zettel");
-        writeln("using web browser: ", BROWSER);
-        writeln("Usage:");
-        writeln("  zettel server");
-        writeln("    -> start background server on port ", PORT);
-        writeln("  zettel [path to markdown]");
-        writeln("    -> view the specified file");
+        writeln("zettel - zero system-interference Markdown note-taking system");
+        writeln("    web browser command: ", BROWSER);
+        writeln("    text editor command: ", EDITOR);
+        writeln("Usage: zettel server                  -> start background server on port ", PORT);
+        writeln("Usage: zettel [path to markdown file] -> view the specified file");
         return;
     }
     
