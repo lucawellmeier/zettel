@@ -7,7 +7,7 @@ import std.process : spawnProcess, Config;
 import std.algorithm : endsWith;
 import std.conv : to;
 import std.socket : Socket, SocketOptionLevel, SocketOption;
-import commonmarkd : convertMarkdownToHTML;
+import commonmarkd : convertMarkdownToHTML, MarkdownFlag;
 import handy_httpd : HttpServer, HttpRequestHandler, HttpRequest, HttpResponse, notFound, okResponse; 
 
 
@@ -60,7 +60,13 @@ class RequestHandler : HttpRequestHandler
         {
             CachedHtml cacheEntry;
             cacheEntry.timestamp = lastEdit;
-            cacheEntry.html = convertMarkdownToHTML(readText(file));
+            cacheEntry.html = convertMarkdownToHTML(
+                readText(file), 
+                MarkdownFlag.dialectCommonMark 
+                | MarkdownFlag.noHTML
+                | MarkdownFlag.noIndentedCodeBlocks
+                | MarkdownFlag.latexMathSpans 
+                | MarkdownFlag.tablesExtension);
             cache[file] = cacheEntry;
             return cacheEntry.html;
         }
