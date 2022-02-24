@@ -38,11 +38,7 @@ window.onload = function()
 };
 </script>
 <style>
-html,body {
-  margin: 0; 
-  font-size: 16px;
-  font-family: serif;
-}
+html,body { margin: 0; font-size: 16px; font-family: serif; }
 body { margin-top: 40px; }
 #content { margin: 0 8px; }
 #menu-bar-container {
@@ -56,10 +52,12 @@ body { margin-top: 40px; }
   width: 100%;
   padding: 4px 6px;
   color: white;
+  clear: right;
 }
 #edit-button {
   color: white;
   float: right;
+  padding-right: 8px;
 }
 @media (min-width: 550px) {
   #content { margin: 0 auto; width: 500px; }
@@ -68,6 +66,10 @@ body { margin-top: 40px; }
 @media (min-width: 800px) {
   #content { width: 700px; }
   #menu-bar { width: 700px; }
+}
+@media (min-width: 1100px) {
+  #content { width: 850px; }
+  #menu-bar { width: 850px; }
 }
 tr:nth-child(even) { background-color: #f2f2f2; }
 td { padding: 4px 8px; }
