@@ -45,9 +45,9 @@ at compile-time.
 ## Quickstart (in fact, there is almost nothing more)
 
 Start the server simply by executing `zettel server`.
-Go somewhere in your filesystem, say `/foo/bar/`, and create a new 
-Markdown file, say `test.md`.
-Run `zettel test.md` and you will see the HTML page in your configured 
+Go somewhere in your filesystem, say `/foo/bar/`, and 
+run `zettel test.md`. This will create the file it if does not yet
+exists and you will see the file opening as web page in your configured 
 browser. In the title bar you will find the button edit, which, upon 
 pressed, will open your text editor. Edit the file and
 save it to automatically update the browser view.

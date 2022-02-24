@@ -2,7 +2,7 @@ import std.stdio : writeln;
 import std.format : format;
 import std.array : replace, split;
 import std.path : absolutePath;
-import std.file : exists, read, readText, timeLastModified;
+import std.file : exists, read, readText, timeLastModified, isDir, isFile, write, FileException;
 import std.process : spawnProcess, Config;
 import std.algorithm : endsWith;
 import std.conv : to;
@@ -83,20 +83,20 @@ class RequestHandler : HttpRequestHandler
     HttpResponse handle(HttpRequest request)
     {
         string url = request.url;
-        if (url.endsWith(".png") && url.exists)
+        if (url.endsWith(".png") && url.exists && url.isFile)
         {
             return okResponse()
                 .addHeader("Content-type", "image/png")
                 .setBody(to!string(cast(char[]) read(url)));
         }
-        else if (url.endsWith(".png") && url.exists)
+        else if (url.endsWith(".png") && url.exists && url.isFile)
         {
             return okResponse()
                 .addHeader("Content-type", "image/jpeg")
                 .setBody(to!string(cast(char[]) read(url)));
 
         }
-        else if (url.endsWith(".md") && url.exists)
+        else if (url.endsWith(".md") && url.exists && url.isFile)
         {
             string page = HTML_TEMPLATE
                 .replace("[[[PATH]]]", url)
@@ -105,7 +105,7 @@ class RequestHandler : HttpRequestHandler
                 .addHeader("Content-type", "text/html")
                 .setBody(page);
         }
-        else if (url.endsWith(".md/check") && url[0 .. $-6].exists)
+        else if (url.endsWith(".md/check") && url[0 .. $-6].exists && url[0 .. $-6].isFile)
         {
             string file = url[0 .. $-6];
             auto lastClientUpdate = to!long(request.headers["Last-update"]);
@@ -114,7 +114,7 @@ class RequestHandler : HttpRequestHandler
                 .addHeader("Content-type", "text/plain")
                 .setBody(doc);
         }
-        else if (url.endsWith(".md/edit") && url[0 .. $-5].exists)
+        else if (url.endsWith(".md/edit") && url[0 .. $-5].exists && url[0 .. $-5].isFile)
         {
             string file = url[0 .. $-5];
             spawnDetachedProcess(EDITOR, file);
@@ -126,9 +126,28 @@ class RequestHandler : HttpRequestHandler
 
 void startview(string file)
 {
-    auto abspath = absolutePath(file);
-    auto url = "http://localhost:" ~ to!string(PORT) ~  abspath;
-    spawnDetachedProcess(BROWSER, url);
+    if (file.exists && file.isDir)
+    {
+        "Error: specified path is a directory".writeln;
+    }
+    else
+    {
+        try
+        {
+            if (!file.exists)
+            {
+                file.write("# New note");
+            }
+
+            auto abspath = absolutePath(file);
+            auto url = "http://localhost:" ~ to!string(PORT) ~  abspath;
+            spawnDetachedProcess(BROWSER, url);
+        }
+        catch (FileException e)
+        {
+            "Error: file does not exist but could not be created either.".writeln;
+        }
+    }
 }
 
 void main(string[] args)
@@ -139,7 +158,7 @@ void main(string[] args)
         writeln("    web browser command: ", BROWSER);
         writeln("    text editor command: ", EDITOR);
         writeln("Usage: zettel server                  -> start background server on port ", PORT);
-        writeln("Usage: zettel [path to markdown file] -> view the specified file");
+        writeln("Usage: zettel [path to markdown file] -> (create and) view the specified file");
         return;
     }
     
