@@ -2,7 +2,7 @@ import std.stdio : writeln;
 import std.format : format;
 import std.array : replace, split;
 import std.path : absolutePath;
-import std.file : exists, readText, timeLastModified;
+import std.file : exists, read, readText, timeLastModified;
 import std.process : spawnProcess, Config;
 import std.algorithm : endsWith;
 import std.conv : to;
@@ -84,7 +84,20 @@ class RequestHandler : HttpRequestHandler
     HttpResponse handle(HttpRequest request)
     {
         string url = request.url;
-        if (url.endsWith(".md") && url.exists)
+        if (url.endsWith(".png") && url.exists)
+        {
+            return okResponse()
+                .addHeader("Content-type", "image/png")
+                .setBody(to!string(cast(char[]) read(url)));
+        }
+        else if (url.endsWith(".png") && url.exists)
+        {
+            return okResponse()
+                .addHeader("Content-type", "image/jpeg")
+                .setBody(to!string(cast(char[]) read(url)));
+
+        }
+        else if (url.endsWith(".md") && url.exists)
         {
             string page = HTML_TEMPLATE
                 .replace("[[[PATH]]]", url)
