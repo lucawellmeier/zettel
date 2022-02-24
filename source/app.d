@@ -140,7 +140,7 @@ void startview(string file)
             }
 
             auto abspath = absolutePath(file);
-            auto url = "http://localhost:" ~ to!string(PORT) ~  abspath;
+            auto url = ADDRESS ~ abspath;
             spawnDetachedProcess(BROWSER, url);
         }
         catch (FileException e)
