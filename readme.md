@@ -38,7 +38,7 @@ enum string BROWSER         = "surf %s";
 enum string EDITOR          = "st -e nvim %s";
 ```
 Then compile using `dub build`. Note that you can take the resulting
-executable whereever you want since it is completely stand-alone. 
+executable wherever you want since it is completely stand-alone. 
 In particular, the `template.html` file is inserted into the code 
 at compile-time.
 
