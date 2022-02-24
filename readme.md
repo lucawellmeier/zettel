@@ -34,8 +34,8 @@ Clone the repo, go to `source/app.d` and set your preferred web browser
 and text editor by editing the following lines at the beginning of the
 file:
 ```D
-enum string BROWSER         = "surf %s";
-enum string EDITOR          = "st -e nvim %s";
+enum string BROWSER = "surf %s";
+enum string EDITOR  = "st -e nvim %s";
 ```
 Then compile using `dub build`. Note that you can take the resulting
 executable wherever you want since it is completely stand-alone. 
@@ -54,9 +54,9 @@ save it to automatically update the browser view.
 
 ### Used Markdown syntax
 
-It uses [CommonMark](https://commonmark.org/) with the following extensions:
-- `noHTML`
-- `noIndentedCodeBlocks`
+It uses [CommonMark](https://commonmark.org/) with the following 
+two extensions (see [documentation of the `commonmarkd` package](http://commonmark-d.dpldocs.info/commonmarkd.MarkdownFlag.html)):
+- `permissiveAutoLinks`
 - `latexMathSpans`
 - `tablesExtension`
 

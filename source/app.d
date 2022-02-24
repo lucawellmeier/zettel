@@ -63,8 +63,7 @@ class RequestHandler : HttpRequestHandler
             cacheEntry.html = convertMarkdownToHTML(
                 readText(file), 
                 MarkdownFlag.dialectCommonMark 
-                | MarkdownFlag.noHTML
-                | MarkdownFlag.noIndentedCodeBlocks
+                | MarkdownFlag.permissiveAutoLinks
                 | MarkdownFlag.latexMathSpans 
                 | MarkdownFlag.tablesExtension);
             cache[file] = cacheEntry;
