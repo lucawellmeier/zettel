@@ -1,10 +1,13 @@
 import std.stdio : writeln;
 import std.format : format;
-import std.array : replace, split;
-import std.path : absolutePath;
-import std.file : exists, read, readText, timeLastModified, isDir, isFile, write, FileException;
+import std.array : replace, split, array;
+import std.path : absolutePath, dirName, pathSplitter;
+import std.file : exists, read, readText, timeLastModified, isDir, isFile, write, FileException, SpanMode, dirEntries;
 import std.process : spawnProcess, Config;
+import std.range : repeat;
 import std.algorithm : endsWith;
+import std.algorithm.sorting : sort;
+import std.algorithm.comparison : min;
 import std.conv : to;
 import std.socket : Socket, SocketOptionLevel, SocketOption;
 import commonmarkd : convertMarkdownToHTML, MarkdownFlag;
@@ -15,7 +18,7 @@ enum string IP              = "127.0.0.1";
 enum string HOSTNAME        = "localhost";
 enum ushort PORT            = 8888;
 enum string ADDRESS         = "http://" ~ HOSTNAME ~ ":" ~ PORT.to!string;
-enum string BROWSER         = "surf %s";
+enum string BROWSER         = "firefox %s";
 enum string EDITOR          = "st -e nvim %s";
 enum string HTML_TEMPLATE   = import("template.html").replace("[[[ADDRESS]]]", ADDRESS);
 
@@ -119,6 +122,43 @@ class RequestHandler : HttpRequestHandler
             string file = url[0 .. $-5];
             spawnDetachedProcess(EDITOR, file);
             return okResponse().addHeader("Content-type", "text/plain").setBody("");
+        }
+        else if (url.isDir)
+        {
+            string query = url.absolutePath ~ "/";
+            string current = request.headers["Current-path"].dirName.absolutePath ~ "/";
+
+            auto currentParts = array(pathSplitter(current));
+            auto queryParts = array(pathSplitter(query));
+            auto smallerCount = min(currentParts.length, queryParts.length);
+
+            ulong common = 0;
+            int i = 0;
+            while (i < smallerCount && currentParts[i] == queryParts[i])
+            {
+                common += currentParts[i].length + 1;
+                i += 1;
+            }
+            common -= 1; // correct 1 for the initial / which appears as a part
+
+            string[] dirs;
+            string[] docs;
+            foreach (string file; dirEntries(query, SpanMode.shallow))
+            {
+                if (file.isDir) dirs ~= file[common..$];
+                else if (file.isFile && file.endsWith(".md")) docs ~= file[common..$];
+            }
+            dirs = array(sort(dirs));
+            docs = array(sort(docs));
+            // sort
+
+            string commonWhite = ' '.repeat(common).to!string;
+
+            string response = "";
+            response ~= current[0..common] ~ "\n";
+            foreach (string doc; docs) response ~= commonWhite ~ doc ~ "\n";
+            foreach (string dir; dirs) response ~= commonWhite ~ dir ~ "/\n";
+            return okResponse().addHeader("Content-type", "text/plain").setBody(response);
         }
         else return notFound();
     }
