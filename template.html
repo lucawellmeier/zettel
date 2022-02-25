@@ -35,6 +35,42 @@ window.onload = function()
     xhttp.send(null);
     return false; // to prevent following the # link in the href
   };
+  document.getElementById("path-search").onclick = function()
+  {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/home/luca/repos/zettel/sampledata", true);
+    xhttp.setRequestHeader("Current-path", "[[[PATH]]]");
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200)
+      {
+        var basepath = "";
+        var docs = [];
+        var dirs = [];
+        lines = xhttp.responseText.split("\n");
+        for (var i = 0; i < lines.length; i++)
+        {
+          if (lines[i].length == 0) continue;
+          if (i == 0)
+          {
+            basepath = lines[i];
+          }
+          else if (lines[i][lines[i].length-1] == "/")
+          {
+            dirs.push(lines[i]);
+          }
+          else
+          {
+            docs.push(lines[i]);
+          }
+        }
+        console.log(basepath);
+        console.log(docs);
+        console.log(dirs);
+      }
+    };
+    xhttp.send(null);
+    return false;
+  }
 };
 </script>
 <style>
@@ -64,6 +100,9 @@ img { display: block; margin: 0 auto; min-width: 35%; max-width: 90%; }
   float: right;
   padding-right: 8px;
 }
+#path-search {
+  color: white;
+}
 @media (min-width: 550px) {
   #content { margin: 0 auto; width: 500px; }
   #menu-bar { margin: 0 auto; width: 500px; }
@@ -81,7 +120,7 @@ img { display: block; margin: 0 auto; min-width: 35%; max-width: 90%; }
 <body>
 <div id="menu-bar-container">
   <div id="menu-bar">
-    <code>[[[PATH]]]</code>
+    <a id="path-search" href="#"><code>[[[PATH]]]</code></a>
     <a id="edit-button" href="#">Edit</a>
   </div>
 </div>
