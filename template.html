@@ -8,6 +8,7 @@
 window.onload = function()
 {
   var container = document.getElementById("content");
+  var searchResultsContainer = document.getElementById("search-results");
   var lastUpdate = Math.floor(Date.now() / 1000);
 
   setInterval(function() {
@@ -37,8 +38,13 @@ window.onload = function()
   };
   document.getElementById("path-search").onclick = function()
   {
+    if (searchResultsContainer.innerHTML.length != 0)
+    {
+      searchResultsContainer.innerHTML = "";
+      return false;
+    }
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/home/luca/repos/zettel/sampledata", true);
+    xhttp.open("GET", "/home/luca", true);
     xhttp.setRequestHeader("Current-path", "[[[PATH]]]");
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200)
@@ -63,9 +69,13 @@ window.onload = function()
             docs.push(lines[i]);
           }
         }
-        console.log(basepath);
-        console.log(docs);
-        console.log(dirs);
+
+        searchResults = "";
+        for (var i = 0; i < docs.length; i++)
+        {
+          searchResults += "<a href=\"" + basepath + docs[i].trim() + "\"><code>" + docs[i].replace(/ /g, '\u00a0') + "</code></a><br>\n";
+        }
+        searchResultsContainer.innerHTML = searchResults;
       }
     };
     xhttp.send(null);
@@ -95,25 +105,46 @@ img { display: block; margin: 0 auto; min-width: 35%; max-width: 90%; }
   color: white;
   clear: right;
 }
-#edit-button {
+#menu-bar a {
   color: white;
+  text-decoration: none;
+}
+#edit-button {
   float: right;
   padding-right: 8px;
 }
-#path-search {
+#search-results-container {
+  position: fixed;
+  top: 20px;
+  width: 100%;
+  background: black;
+  max-height: 80%;
+  overflow-y: auto;
+}
+#search-results {
+  font-size: 12px;
+  width: 100%;
+  padding: 4px 6px;
   color: white;
+}
+#search-results a {
+  color: white;
+  text-decoration: none;
 }
 @media (min-width: 550px) {
   #content { margin: 0 auto; width: 500px; }
   #menu-bar { margin: 0 auto; width: 500px; }
+  #search-results { margin: 0 auto; width: 500px; }
 }
 @media (min-width: 800px) {
   #content { width: 700px; }
   #menu-bar { width: 700px; }
+  #search-results { width: 700px; }
 }
 @media (min-width: 1100px) {
   #content { width: 850px; }
   #menu-bar { width: 850px; }
+  #search-results { width: 850px; }
 }
 </style>
 </head>
@@ -123,6 +154,9 @@ img { display: block; margin: 0 auto; min-width: 35%; max-width: 90%; }
     <a id="path-search" href="#"><code>[[[PATH]]]</code></a>
     <a id="edit-button" href="#">Edit</a>
   </div>
+</div>
+<div id="search-results-container">
+  <div id="search-results"></div>
 </div>
 <article id="content">
 [[[CONTENT]]]
